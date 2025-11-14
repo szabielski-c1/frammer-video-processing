@@ -1,0 +1,17 @@
+{
+  "name": "frammer-video-processing",
+  "version": "1.0.0",
+  "description": "Frammer Video Processing App - Frontend and Backend for AI-powered video processing",
+  "main": "backend/server.js",
+  "scripts": {
+    "start": "cd backend && npm install && npm start",
+    "install": "cd backend && npm install"
+  },
+  "engines": {
+    "node": ">=14.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/szabielski-c1/frammer-video-processing"
+  }
+}
