@@ -22,6 +22,47 @@ app.get('/health', (req, res) => {
   res.json({ status: 'ok', message: 'Server is running' });
 });
 
+// Test webhook endpoint - for debugging
+app.post('/api/webhook/test', (req, res) => {
+  console.log('Test webhook called!');
+
+  // Simulate a webhook from Frammer
+  const testData = {
+    event: 'video_processed.partial-success',
+    data: {
+      id: 999,
+      type: 'test',
+      insights: [
+        {
+          video_type: 'vertical video',
+          data: [
+            {
+              video_id: 'test-123',
+              video_uri: 'https://example.com/test.mp4',
+              status: 'done',
+              meta: {}
+            }
+          ]
+        }
+      ]
+    }
+  };
+
+  // Store test data
+  webhookResults.set(999, {
+    status: 'processing',
+    timestamp: new Date().toISOString(),
+    videoUrl: 'https://example.com/test-video.mp4',
+    lastWebhook: {
+      event: testData.event,
+      data: testData.data,
+      timestamp: new Date().toISOString()
+    }
+  });
+
+  res.json({ status: 'Test webhook stored', data: testData });
+});
+
 // Submit video processing request to Frammer API
 app.post('/api/process-video', async (req, res) => {
   try {
@@ -92,8 +133,13 @@ app.post('/api/process-video', async (req, res) => {
 // Webhook endpoint to receive Frammer API results
 app.post('/api/webhook', (req, res) => {
   try {
+    console.log('=== WEBHOOK RECEIVED ===');
+    console.log('Time:', new Date().toISOString());
+    console.log('Headers:', JSON.stringify(req.headers, null, 2));
+    console.log('Body:', JSON.stringify(req.body, null, 2));
+    console.log('========================');
+
     const webhookData = req.body;
-    console.log('Webhook received:', JSON.stringify(webhookData, null, 2));
 
     // Extract the ID from the webhook data
     if (webhookData.data && webhookData.data.id) {
@@ -122,6 +168,9 @@ app.post('/api/webhook', (req, res) => {
       }
 
       webhookResults.set(id, existing);
+      console.log(`Updated results for ID ${id}, status: ${existing.status}`);
+    } else {
+      console.log('WARNING: Webhook data missing ID field');
     }
 
     // Acknowledge receipt
