@@ -2,6 +2,7 @@ require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const axios = require('axios');
+const path = require('path');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -9,6 +10,9 @@ const PORT = process.env.PORT || 3000;
 // Middleware
 app.use(cors());
 app.use(express.json());
+
+// Serve static files from frontend directory
+app.use(express.static(path.join(__dirname, '../frontend')));
 
 // Store webhook results in memory (in production, use a database)
 const webhookResults = new Map();
@@ -161,9 +165,15 @@ app.get('/api/results', (req, res) => {
   });
 });
 
+// Catch-all route to serve index.html for any non-API routes
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, '../frontend/index.html'));
+});
+
 // Start server
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
+  console.log(`Frontend available at: http://localhost:${PORT}`);
   console.log(`Local Webhook URL: http://localhost:${PORT}/api/webhook`);
   console.log(`Configured External Webhook URL: ${process.env.WEBHOOK_URL || 'Not set'}`);
   console.log(`\nNote: Configure the webhook URL in your Frammer dashboard to receive results.`);

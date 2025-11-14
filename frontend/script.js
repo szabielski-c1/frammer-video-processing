@@ -1,5 +1,5 @@
-// Configuration
-const API_BASE_URL = 'http://localhost:3000';
+// Configuration - Use same origin as frontend (works in both local and production)
+const API_BASE_URL = window.location.origin;
 
 // DOM Elements
 const videoForm = document.getElementById('videoForm');
