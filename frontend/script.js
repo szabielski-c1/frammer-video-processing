@@ -41,22 +41,18 @@ async function downloadVideo(videoUrl, filename) {
     try {
         showStatus(`Downloading ${filename}...`, 'info');
 
-        const response = await fetch(videoUrl);
-        const blob = await response.blob();
+        // Use the backend proxy to avoid CORS issues
+        const proxyUrl = `${API_BASE_URL}/api/download-video?url=${encodeURIComponent(videoUrl)}&filename=${encodeURIComponent(filename)}`;
 
         // Create download link
-        const url = window.URL.createObjectURL(blob);
         const a = document.createElement('a');
-        a.href = url;
+        a.href = proxyUrl;
         a.download = filename;
         document.body.appendChild(a);
         a.click();
-
-        // Cleanup
-        window.URL.revokeObjectURL(url);
         document.body.removeChild(a);
 
-        showStatus(`Downloaded ${filename} successfully!`, 'success');
+        showStatus(`Downloading ${filename}...`, 'success');
     } catch (error) {
         console.error('Download error:', error);
         showStatus(`Failed to download: ${error.message}`, 'error');

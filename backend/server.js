@@ -214,6 +214,37 @@ app.get('/api/results', (req, res) => {
   });
 });
 
+// Proxy endpoint for downloading videos (avoids CORS issues)
+app.get('/api/download-video', async (req, res) => {
+  try {
+    const { url, filename } = req.query;
+
+    if (!url) {
+      return res.status(400).json({ error: 'URL parameter is required' });
+    }
+
+    console.log('Downloading video:', url);
+
+    // Fetch the video from the source
+    const response = await axios({
+      method: 'GET',
+      url: url,
+      responseType: 'stream'
+    });
+
+    // Set headers for download
+    res.setHeader('Content-Type', 'video/mp4');
+    res.setHeader('Content-Disposition', `attachment; filename="${filename || 'video.mp4'}"`);
+
+    // Pipe the video stream to the response
+    response.data.pipe(res);
+
+  } catch (error) {
+    console.error('Download proxy error:', error.message);
+    res.status(500).json({ error: 'Failed to download video', message: error.message });
+  }
+});
+
 // Catch-all route to serve index.html for any non-API routes
 app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, '../frontend/index.html'));
