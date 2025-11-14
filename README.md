@@ -263,12 +263,13 @@ Key details:
    - `WEBHOOK_URL`: Your Railway app URL + `/api/webhook`
 
 4. **Get Your Railway URL**
-   - Railway will provide a public URL (e.g., `https://your-app.up.railway.app`)
-   - Your webhook endpoint will be: `https://your-app.up.railway.app/api/webhook`
+   - Railway deployment URL: `https://web-production-e4a7d.up.railway.app`
+   - Your webhook endpoint: `https://web-production-e4a7d.up.railway.app/api/webhook`
+   - Frontend accessible at: `https://web-production-e4a7d.up.railway.app`
 
 5. **Configure Frammer Webhook**
    - Go to your Frammer dashboard
-   - Set the webhook URL to your Railway webhook endpoint
+   - Set the webhook URL to: `https://web-production-e4a7d.up.railway.app/api/webhook`
    - Save the configuration
 
 6. **Update Frontend (Optional)**
